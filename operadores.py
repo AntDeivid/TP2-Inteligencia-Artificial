@@ -38,7 +38,10 @@ class Mutacao:
         i, j = sorted(np.random.choice(len(individuo), 2, replace=False))
         return individuo[:i] + list(reversed(individuo[i:j])) + individuo[j:]
 
+
 class Elitismo:
     @staticmethod
     def manter_melhores(populacao: List[List[int]], fitness: List[float], n_elites: int) -> List[List[int]]:
-        return [populacao[i] for i in np.argsort(fitness)[-n_elites:]]
+        indices_ordenados = np.argsort(fitness)[::-1]  # Ordena em ordem decrescente
+        return [populacao[i] for i in indices_ordenados[:n_elites]]
+
