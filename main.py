@@ -12,11 +12,11 @@ def main():
    
     # Inicialização
     # No main.py:
-    pqc = PQA(n=3)
-    pqc.carregar_matrizes(
-        distancias=[[0, 10, 15], [10, 0, 12], [15, 12, 0]],
-        fluxo=[[0, 3, 6], [3, 0, 1], [6, 1, 0]]
-)
+    #pqc = PQA(n=3)
+    #pqc.carregar_matrizes(
+     #   distancias=[[0, 10, 15], [10, 0, 12], [15, 12, 0]],
+      #  fluxo=[[0, 3, 6], [3, 0, 1], [6, 1, 0]]
+#)
 
 
     pqc = PQA(n=N, seed=SEED)
