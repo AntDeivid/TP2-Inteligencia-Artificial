@@ -57,8 +57,7 @@ class Crossover:
         return filho
 
     @staticmethod
-    # operadores.py (classe Crossover - método PMX corrigido)
-    # operadores.py (classe Crossover - método PMX corrigido)
+    # não funciona direito ou trava o codigo ou da retorno de valor errado
     @staticmethod
     def pmx(pai1: List[int], pai2: List[int]) -> List[int]:
         size = len(pai1)
