@@ -23,6 +23,13 @@ class PQA:
         np.fill_diagonal(fluxo, 0)
 
 
+        # pqa.py (método _gerar_entradas_aleatorias)
+        assert np.allclose(distancias, distancias.T), "Matriz de distâncias não é simétrica!"
+        assert np.allclose(fluxo, fluxo.T), "Matriz de fluxo não é simétrica!"
+        assert np.all(np.diag(distancias) == 0), "Diagonal da matriz de distâncias não é zero!"
+        assert np.all(np.diag(fluxo) == 0), "Diagonal da matriz de fluxo não é zero!"
+
+
         return distancias, fluxo
 
 
