@@ -59,7 +59,7 @@ class AlgoritmoGenetico:
             if geracao >= 20:
                 diferenca_percentual = abs(melhor_custo_historico[-20] - melhor_custo) / melhor_custo_historico[-20] * 100
                 if diferenca_percentual < 0.1:  # 0.1% de melhoria em 20 gerações
-                    print(f"Convergência na geração {geracao} (melhoria < 0.1% nos últimos 20 gerações)!")
+                    print(f"Convergência na geração {geracao} (melhoria menor que 0.1% nos últimos 20 gerações)!")
                     break
 
         return self.populacao[np.argmax(self._calcular_fitness())]
