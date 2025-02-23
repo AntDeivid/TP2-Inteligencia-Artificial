@@ -33,6 +33,10 @@ class Mutacao:
         i, j = np.random.choice(len(individuo), 2, replace=False)
         novo_ind[i], novo_ind[j] = novo_ind[j], novo_ind[i]
         return novo_ind
+    @staticmethod
+    def inversao(individuo: List[int]) -> List[int]:
+        i, j = sorted(np.random.choice(len(individuo), 2, replace=False))
+        return individuo[:i] + list(reversed(individuo[i:j])) + individuo[j:]
 
 class Elitismo:
     @staticmethod
