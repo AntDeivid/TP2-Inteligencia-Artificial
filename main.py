@@ -4,9 +4,9 @@ from algoritmo_genetico import AlgoritmoGenetico
 from config import *
 import time
 
-def executar_experimento(pqc, metodo_selecao, metodo_crossover, metodo_elitismo, metodo_mutacao):
+def executar_experimento(pqc, metodo_selecao, metodo_crossover, metodo_elitismo, metodo_mutacao, pmx_retorna_um_filho=False):
     inicio = time.time()
-    
+
     ag = AlgoritmoGenetico(
         pqc=pqc,
         tamanho_populacao=TAMANHO_POPULACAO,
@@ -16,12 +16,13 @@ def executar_experimento(pqc, metodo_selecao, metodo_crossover, metodo_elitismo,
         metodo_selecao=metodo_selecao,
         metodo_crossover=metodo_crossover,
         metodo_elitismo=metodo_elitismo,
-        metodo_mutacao=metodo_mutacao
+        metodo_mutacao=metodo_mutacao,
+        pmx_retorna_um_filho=pmx_retorna_um_filho
     )
 
     melhor_solucao = ag.executar()
     custo = pqc.calcular_custo(melhor_solucao)
-    
+
     print(f"Config: {metodo_selecao.upper()}/{metodo_crossover.upper()}/{metodo_elitismo.upper()}/{metodo_mutacao.upper()}")
     print(f"Melhor custo: {custo} | Tempo: {time.time() - inicio:.2f}s\n")
     return custo
@@ -60,20 +61,20 @@ def main():
     executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
     executar_experimento(pqc, 'roleta', 'ox', 'top', 'swap')
 
-    #Parte 2: Comparação de Crossover
-    print("\n=== PARTE 2: CROSSOVER (OX vs PMX) ===")
-    executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    executar_experimento(pqc, 'torneio', 'pmx', 'top', 'swap')
+    # #Parte 2: Comparação de Crossover
+    # print("\n=== PARTE 2: CROSSOVER (OX vs PMX) ===")
+    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
+    # executar_experimento(pqc, 'torneio', 'pmx', 'top', 'swap', pmx_retorna_um_filho=True)
 
-    # Parte 3: Comparação de Elitismo
-    print("\n=== PARTE 3: ELITISMO (TOP vs HIBRIDO) ===")
-    executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    executar_experimento(pqc, 'torneio', 'ox', 'hibrido', 'swap')
+    # # Parte 3: Comparação de Elitismo
+    # print("\n=== PARTE 3: ELITISMO (TOP vs HIBRIDO) ===")
+    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
+    # executar_experimento(pqc, 'torneio', 'ox', 'hibrido', 'swap')
 
-    # Parte 4: Comparação de Mutação
-    print("\n=== PARTE 4: MUTAÇÃO (SWAP vs INVERSÃO) ===")
-    executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    executar_experimento(pqc, 'torneio', 'ox', 'top', 'inversao')
+    # # Parte 4: Comparação de Mutação
+    # print("\n=== PARTE 4: MUTAÇÃO (SWAP vs INVERSÃO) ===")
+    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
+    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'inversao')
 
 if __name__ == "__main__":
     main()
