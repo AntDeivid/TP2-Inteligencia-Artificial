@@ -27,6 +27,81 @@ def executar_experimento(pqc, metodo_selecao, metodo_crossover, metodo_elitismo,
     print(f"Melhor custo: {custo} | Tempo: {time.time() - inicio:.2f}s\n")
     return custo
 
+
+def testar_parametros():
+    """Executa testes variando parâmetros para encontrar configurações eficientes."""
+    tamanhos_populacao = [50, 100, 200, 500]
+    max_geracoes = [100, 200, 500]
+    taxas_mutacao = [0.05, 0.1, 0.2]
+    taxas_elitismo = [0.05, 0.1, 0.2]
+
+    melhor_config = None
+    melhor_custo = float('inf')
+
+    for pop in tamanhos_populacao:
+        for gen in max_geracoes:
+            for mut in taxas_mutacao:
+                for elit in taxas_elitismo:
+                    pqc = PQA(n=10, seed=42)  # Tamanho fixo para experimentação
+                    ag = AlgoritmoGenetico(
+                        pqc=pqc,
+                        tamanho_populacao=pop,
+                        max_geracoes=gen,
+                        taxa_mutacao=mut,
+                        taxa_elitismo=elit,
+                        metodo_selecao='torneio',
+                        metodo_crossover='ox',
+                        metodo_elitismo='top',
+                        metodo_mutacao='swap'
+                    )
+
+                    inicio = time.time()
+                    solucao = ag.executar()
+                    custo = pqc.calcular_custo(solucao)
+                    tempo_execucao = time.time() - inicio
+
+                    print(
+                        f"População: {pop}, Gerações: {gen}, Mutação: {mut}, Elitismo: {elit} | Custo: {custo} | Tempo: {tempo_execucao:.2f}s")
+
+                    if custo < melhor_custo:
+                        melhor_custo = custo
+                        melhor_config = (pop, gen, mut, elit)
+
+    print("\nMelhor configuração encontrada:")
+    print(
+        f"População: {melhor_config[0]}, Gerações: {melhor_config[1]}, Mutação: {melhor_config[2]}, Elitismo: {melhor_config[3]}")
+    return melhor_config
+
+
+def testar_tamanho_maximo():
+    """Aumenta o tamanho da entrada PQA até que o tempo de execução fique impraticável."""
+    tamanhos_n = [10, 20, 50, 100, 200, 500]  # Ajuste conforme necessário
+    tempo_limite = 60  # Limite de tempo aceitável por execução (em segundos)
+
+    for n in tamanhos_n:
+        pqc = PQA(n=n, seed=42)
+        ag = AlgoritmoGenetico(
+            pqc=pqc,
+            tamanho_populacao=100,  # Parâmetro fixo baseado em testes anteriores
+            max_geracoes=200,
+            taxa_mutacao=0.1,
+            taxa_elitismo=0.1,
+            metodo_selecao='torneio',
+            metodo_crossover='ox',
+            metodo_elitismo='top',
+            metodo_mutacao='swap'
+        )
+
+        inicio = time.time()
+        ag.executar()
+        tempo_execucao = time.time() - inicio
+
+        print(f"Tamanho n={n} | Tempo: {tempo_execucao:.2f}s")
+
+        if tempo_execucao > tempo_limite:
+            print(f"\nTamanho máximo viável identificado: {n // 2}")
+            break
+
 def main():
     # Configurar encoding para UTF-8
     import sys
@@ -56,10 +131,14 @@ def main():
     print("INÍCIO DA EXECUÇÃO - TRABALHO 2 - ALGORITMOS GENÉTICOS")
     print("="*50 + "\n")
 
+    # # Parte 0: Escolha de Parâmetros
+    # print("\n=== PARTE 0: ESCOLHA DE PARÂMETROS ===")
+    # melhor_config = testar_parametros()
+
     # Parte 1: Comparação de Seleção
-    print("\n=== PARTE 1: SELEÇÃO (TORNEIO vs ROLETA) ===")
-    executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    executar_experimento(pqc, 'roleta', 'ox', 'top', 'swap')
+    # print("\n=== PARTE 1: SELEÇÃO (TORNEIO vs ROLETA) ===")
+    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
+    # executar_experimento(pqc, 'roleta', 'ox', 'top', 'swap')
 
     # #Parte 2: Comparação de Crossover
     # print("\n=== PARTE 2: CROSSOVER (OX vs PMX) ===")
@@ -75,6 +154,10 @@ def main():
     # print("\n=== PARTE 4: MUTAÇÃO (SWAP vs INVERSÃO) ===")
     # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
     # executar_experimento(pqc, 'torneio', 'ox', 'top', 'inversao')
+
+    # Parte 5: Tamanho Máximo de Entrada Viável
+    print("\n=== PARTE 5: TAMANHO MÁXIMO DE ENTRADA VIÁVEL ===")
+    testar_tamanho_maximo()
 
 if __name__ == "__main__":
     main()
