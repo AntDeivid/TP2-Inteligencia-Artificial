@@ -1,9 +1,35 @@
 # -*- coding: utf-8 -*-
+import datetime
+import csv
+import os
+import time
 from pqa import PQA
 from algoritmo_genetico import AlgoritmoGenetico
 from config import *
-import time
 
+def salvar_dados_experimento(parte, nome_experimento, dados):
+    """
+    Salva os dados do experimento em um arquivo CSV dentro da pasta correspondente à parte.
+    
+    Parâmetros:
+      parte: Nome da parte do experimento (ex: "parte_1_selecao").
+      nome_experimento: Nome identificador para os dados (ex: "selecao").
+      dados: Lista de dicionários com os resultados (cada dicionário deve conter as chaves: "config", "custo" e "tempo").
+    """
+    pasta = f"resultados/{parte}"
+    os.makedirs(pasta, exist_ok=True)
+    
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    nome_arquivo = f"{pasta}/{nome_experimento}_{timestamp}.csv"
+    
+    fieldnames = ["config", "custo", "tempo"]
+    with open(nome_arquivo, mode="w", newline="") as arquivo_csv:
+        escritor = csv.DictWriter(arquivo_csv, fieldnames=fieldnames)
+        escritor.writeheader()
+        for item in dados:
+            escritor.writerow(item)
+    
+    print(f"Dados salvos em: {nome_arquivo}")
 def executar_experimento(pqc, metodo_selecao, metodo_crossover, metodo_elitismo, metodo_mutacao, pmx_retorna_um_filho=False):
     inicio = time.time()
 
@@ -104,56 +130,46 @@ def testar_tamanho_maximo():
 
 def main():
     # Configurar encoding para UTF-8
-    import sys
-    import io
+    import sys, io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
     pqc = PQA(n=N, seed=SEED)
-    #pqc = PQA(n=5) feito só para testa manualmente a logica :)
-    #pqc.carregar_matrizes(
-    #    distancias=[
-    #        [0, 10, 15, 22, 25],
-    #        [10, 0, 18, 12, 20],
-    #        [15, 18, 0, 8, 14],
-    #        [22, 12, 8, 0, 9],
-    #        [25, 20, 14, 9, 0]
-    #    ],
-    #    fluxo=[
-    #        [0, 3, 6, 2, 4],
-    #        [3, 0, 1, 5, 7],
-    #        [6, 1, 0, 3, 2],
-    #        [2, 5, 3, 0, 4],
-    #        [4, 7, 2, 4, 0]
-    #    ]
-    #)
 
     print("\n" + "="*50)
     print("INÍCIO DA EXECUÇÃO - TRABALHO 2 - ALGORITMOS GENÉTICOS")
     print("="*50 + "\n")
 
-    # # Parte 0: Escolha de Parâmetros
-    # print("\n=== PARTE 0: ESCOLHA DE PARÂMETROS ===")
-    # melhor_config = testar_parametros()
+    # --- PARTE 1: Comparação de Seleção ---
+    print("\n=== PARTE 1: SELEÇÃO (TORNEIO vs ROLETA) ===")
+    resultados_parte1 = []
+    resultados_parte1.append(executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap'))
+    resultados_parte1.append(executar_experimento(pqc, 'roleta', 'ox', 'top', 'swap'))
+    salvar_dados_experimento("parte_1_selecao", "selecao", resultados_parte1)
 
-    # Parte 1: Comparação de Seleção
-    # print("\n=== PARTE 1: SELEÇÃO (TORNEIO vs ROLETA) ===")
-    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    # executar_experimento(pqc, 'roleta', 'ox', 'top', 'swap')
+    # --- PARTE 2: Comparação de Crossover ---
+    print("\n=== PARTE 2: CROSSOVER (OX vs PMX) ===")
+    resultados_parte2 = []
+    resultados_parte2.append(executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap'))
+    resultados_parte2.append(executar_experimento(pqc, 'torneio', 'pmx', 'top', 'swap', pmx_retorna_um_filho=True))
+    salvar_dados_experimento("parte_2_crossover", "crossover", resultados_parte2)
 
-    # #Parte 2: Comparação de Crossover
-    # print("\n=== PARTE 2: CROSSOVER (OX vs PMX) ===")
-    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    # executar_experimento(pqc, 'torneio', 'pmx', 'top', 'swap', pmx_retorna_um_filho=True)
+    # --- PARTE 3: Comparação de Elitismo ---
+    print("\n=== PARTE 3: ELITISMO (TOP vs HÍBRIDO) ===")
+    resultados_parte3 = []
+    resultados_parte3.append(executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap'))
+    resultados_parte3.append(executar_experimento(pqc, 'torneio', 'ox', 'hibrido', 'swap'))
+    salvar_dados_experimento("parte_3_elitismo", "elitismo", resultados_parte3)
 
-    # # Parte 3: Comparação de Elitismo
-    # print("\n=== PARTE 3: ELITISMO (TOP vs HIBRIDO) ===")
-    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    # executar_experimento(pqc, 'torneio', 'ox', 'hibrido', 'swap')
+    # --- PARTE 4: Comparação de Mutação ---
+    print("\n=== PARTE 4: MUTAÇÃO (SWAP vs INVERSÃO) ===")
+    resultados_parte4 = []
+    resultados_parte4.append(executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap'))
+    resultados_parte4.append(executar_experimento(pqc, 'torneio', 'ox', 'top', 'inversao'))
+    salvar_dados_experimento("parte_4_mutacao", "mutacao", resultados_parte4)
 
-    # # Parte 4: Comparação de Mutação
-    # print("\n=== PARTE 4: MUTAÇÃO (SWAP vs INVERSÃO) ===")
-    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'swap')
-    # executar_experimento(pqc, 'torneio', 'ox', 'top', 'inversao')
+    # Se desejar, mantenha ou descomente a Parte 5 para testar o tamanho máximo de entrada
+    # print("\n=== PARTE 5: TAMANHO MÁXIMO DE ENTRADA VIÁVEL ===")
+    # testar_tamanho_maximo()
 
     # Parte 5: Tamanho Máximo de Entrada Viável
     print("\n=== PARTE 5: TAMANHO MÁXIMO DE ENTRADA VIÁVEL ===")
