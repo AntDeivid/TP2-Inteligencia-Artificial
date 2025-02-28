@@ -13,7 +13,7 @@
 
 N = 10
 TAMANHO_POPULACAO = 100       # Reduzido para ganho de velocidade
-MAX_GERACOES = 200           # Limite máximo seguro
-TAXA_MUTACAO = 0.1          # Mais agressivo para diversidade
+MAX_GERACOES = 100           # Limite máximo seguro
+TAXA_MUTACAO = 0.05         # Mais agressivo para diversidade
 TAXA_ELITISMO = 0.1          # 10% de elites
 SEED = None                  # Desativa seed para variabilidade

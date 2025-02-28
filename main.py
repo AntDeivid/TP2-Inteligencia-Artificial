@@ -161,6 +161,10 @@ def main():
     print(f"População: {melhor_config[0]}, Gerações: {melhor_config[1]}, Mutação: {melhor_config[2]}, Elitismo: {melhor_config[3]}")
     print("\n")
     
+    # # Parte 0: Escolha de Parâmetros
+    # print("\n=== PARTE 0: ESCOLHA DE PARÂMETROS ===")
+    # melhor_config = testar_parametros()
+    
     # --- PARTE 1: Comparação de Seleção ---
     # print("\n=== PARTE 1: SELEÇÃO (TORNEIO vs ROLETA) ===")
     # resultados_parte1 = []
