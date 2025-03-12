@@ -59,7 +59,7 @@ def executar_experimento(pqc, metodo_selecao):
     return resultados
 
 def main():
-    pqc = PQA(n=10, seed=SEED)
+    pqc = PQA(n=N, seed=SEED)  # Alterado para usar N do config.py
     
     print("\n=== EXECUTANDO EXPERIMENTO - COMPARAÇÃO DE SELEÇÃO ===")
     
@@ -70,7 +70,18 @@ def main():
     # Salvar resultados
     salvar_dados_experimento("parte_1_selecao", "selecao_torneio", resultados_torneio)
     salvar_dados_experimento("parte_1_selecao", "selecao_roleta", resultados_roleta)
+
+    # Análise estatística (trecho adicionado)
+    custos_torneio = [r["fitness"] for r in resultados_torneio]
+    custos_roleta = [r["fitness"] for r in resultados_roleta]
+
+    print("\nRESULTADOS DO EXPERIMENTO:")
+    print(f"Média de custo Torneio: {statistics.mean(custos_torneio):.1f} | Desvio padrão: {statistics.stdev(custos_torneio):.1f}")
+    print(f"Média de custo Roleta: {statistics.mean(custos_roleta):.1f} | Desvio padrão: {statistics.stdev(custos_roleta):.1f}")
     
+    melhor_metodo = "Torneio" if statistics.mean(custos_torneio) < statistics.mean(custos_roleta) else "Roleta"
+    print(f"\nMelhor método de seleção: {melhor_metodo}")
+
     print("\nExperimento concluído. Dados salvos com sucesso.")
     
 if __name__ == "__main__":
