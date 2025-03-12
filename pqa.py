@@ -8,7 +8,7 @@ class PQA:
         if seed is not None:
             np.random.seed(seed)
         self.distancias, self.fluxo = self._gerar_entradas_aleatorias()
-        self.fluxo_triangular = np.triu(self.fluxo, k=1)  # Pré-calcula o fluxo não repetido
+        self.fluxo_triangular = np.triu(self.fluxo, k=1)  # Pré-calcula o fluxo não repetido para evita q repita dados simetricos
 
 
     def _gerar_entradas_aleatorias(self) -> Tuple[np.ndarray, np.ndarray]:
@@ -33,10 +33,11 @@ class PQA:
         return distancias, fluxo
 
 
+    # pqa.py (trecho corrigido)
     def calcular_custo(self, permutacao: List[int]) -> int:
         perm = np.array(permutacao)
         dist_perm = self.distancias[perm, :][:, perm]
-        return np.sum(self.fluxo * dist_perm) // 2   # Otimização chave
+        return int(np.sum(self.fluxo * dist_perm) // 2)  # Forçar retorno como int
     
     def carregar_matrizes(self, distancias, fluxo):
         self.distancias = np.array(distancias)
