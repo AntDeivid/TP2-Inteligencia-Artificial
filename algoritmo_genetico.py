@@ -25,7 +25,7 @@ class AlgoritmoGenetico:
         self.pmx_retorna_um_filho = pmx_retorna_um_filho # Salvar o parâmetro
         self.populacao = self._gerar_populacao_inicial()
 
-    def _gerar_populacao_inicial(self) -> List[List[int]]:
+    def _gerar_populacao_inicial(self) -> List[List[int]]:#vai gerar permutação aletoria ajuda na diversividade
         return [np.random.permutation(self.pqc.n).tolist()
                 for _ in range(self.tamanho_populacao)]
 
@@ -50,26 +50,26 @@ class AlgoritmoGenetico:
         else:
             raise ValueError(f"Método de crossover desconhecido: {self.metodo_crossover}")
 
-
+    # algoritmo_genetico.py (trecho corrigido)
     def executar(self) -> List[int]:
-        melhor_custo_historico = []
+        melhor_custo_global = float('inf')
+        geracoes_sem_melhoria = 0
 
         for geracao in range(self.max_geracoes):
-            fitness = self._calcular_fitness()
-            melhor_custo = int(1 / max(fitness) - 1)
-            media_custo = int(1 / np.mean(fitness) - 1)
-            pior_custo = int(1 / min(fitness) - 1)
+            custos = [self.pqc.calcular_custo(ind) for ind in self.populacao]
+            fitness = [1 / (1 + custo) for custo in custos]
 
-            melhor_custo_historico.append(melhor_custo)
+            melhor_custo = min(custos)
+            media_custo = int(np.mean(custos))  # Converta explicitamente para int
+            pior_custo = max(custos)
 
-            print(f"Geração {geracao:3d} | "
-                  f"Melhor: {melhor_custo:5d} | "
-                  f"Média: {media_custo:5d} | "
-                  f"Pior: {pior_custo:5d}")
+            # Linha corrigida (garanta UTF-8 e formatação correta)
+            print(f"Geração {geracao:3d} | Melhor: {melhor_custo:5d} | Média: {media_custo:5d} | Pior: {pior_custo:5d}")
+
 
             # Seleção
             if self.metodo_selecao == 'torneio':
-                selecionados = Selecao.torneio_eficiente(self.populacao, fitness)
+                selecionados = Selecao.torneio_eficiente(self.populacao, fitness)  # <--- Corrigido
             elif self.metodo_selecao == 'roleta':
                 selecionados = Selecao.roleta(self.populacao, fitness)
             else:
@@ -120,10 +120,8 @@ class AlgoritmoGenetico:
             self.populacao = elites + filhos
 
             # Critério de parada
-            if geracao >= 50:
-                diferenca = abs(melhor_custo_historico[-50] - melhor_custo)
-                if diferenca / melhor_custo_historico[-50] < 0.001:
-                    print(f"Convergência na geração {geracao}!")
-                    break
+            if geracoes_sem_melhoria >= 50:
+                print(f"Convergência na geração {geracao} (50 gerações sem melhoria)!")
+                break
 
-        return self.populacao[np.argmax(self._calcular_fitness())]
+        return self.populacao[np.argmax(self._calcular_fitness())]  
